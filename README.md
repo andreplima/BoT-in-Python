@@ -1,2 +1,2 @@
 # BoT-in-Python
-Some examples of how to implement bag of task applications in Python
+Some simple examples of how to implement a bag of tasks (BoT) application in Python
