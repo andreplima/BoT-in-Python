@@ -32,7 +32,7 @@ def main(nc, ss, nd):
 
   elif(nc > 1):
 
-    # computes the estimate for the center of the distribution using a parallel execution scheme
+    # obtains the distance matrix using a parallel execution scheme
     tsprint('Parallel execution started with {0} processes spawned from {1}.'.format(nc, os.getpid()))
     startTs = stimestamp()
     mm = parallel(sample, ss, nc)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
   #
   # python case1.py <number of cores> <sample size> <dimensionality>
   # -- <number of cores>: how many cores can be assigned to tasks;
-  # -- <sample size>: number of vectors that will comprise the sample, in thousands
+  # -- <sample size>: number of vectors that will comprise the sample
   # -- <dimensionality>: the number of dimensions of the sampling space
 
   nc = int(sys.argv[1])

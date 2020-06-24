@@ -47,7 +47,8 @@ def parallel(sample, ss, nc):
 
   # partitions the tasks into bags and execute them
   pool = Pool(processes = nc,)
-  partitions = list(chunks(tasks, nc))
+  #partitions = list(chunks(tasks, nc))
+  partitions = chunks(tasks, nc)
   result = pool.map(bote, partitions)
 
   # aggregates the results into an integrated response
