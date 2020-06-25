@@ -1,8 +1,10 @@
+import os
 import numpy as np
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
 
-from multiprocessing import Pool, shared_memory
+from sharedDefs      import tsprint
+from multiprocessing import Pool
 from itertools       import chain
 
 #-----------------------------------------------------------------------------------------------------------
@@ -35,8 +37,24 @@ def drawSample(ss, seed):
 
 def sequential(sample):
 
-  # computes the mean estimate for the body- mass index (BMI)
+  # computes the estimate for the mean body-mass index (BMI)
   bmi_sample = [te(height, weight) for (height, weight) in sample]
+  point_estimate = np.mean(bmi_sample)
+
+  return point_estimate
+
+def parallel(sample, nc):
+
+  # converts each point in the sample into a task
+  tasks = sample
+
+  # partitions the tasks into bags and execute them
+  pool = Pool(processes = nc,)
+  partitions = chunks(tasks, nc)
+  result = pool.map(bote, partitions)
+
+  # aggregates the results into an integrated response
+  bmi_sample = list(chain(*result))
   point_estimate = np.mean(bmi_sample)
 
   return point_estimate
@@ -48,22 +66,6 @@ def statistical(sample, ss, sz, _alpha):
     res = bs.bootstrap(np.array(bmi_sample), stat_func=bs_stats.mean, alpha=_alpha)
 
     return (res.lower_bound, res.value, res.upper_bound)
-
-def parallel(sample, nc):
-
-  # converts each point in the sample into a task
-  tasks = sample
-
-  # partitions the tasks into bags and execute them
-  pool = Pool(processes = nc,)
-  partitions = list(chunks(tasks, nc))
-  result = pool.map(bote, partitions)
-
-  # aggregates the results into an integrated response
-  bmi_sample = list(chain(*result))
-  point_estimate = np.mean(bmi_sample)
-
-  return point_estimate
 
 def chunks(L, numOfCores, adjust = []):
   """
@@ -95,20 +97,20 @@ def chunks(L, numOfCores, adjust = []):
 
   for i in range(len(boundaries)):
     (idxl, idxr) = boundaries[i]
-    yield (idxl, idxr)
+    yield L[idxl : idxr]
 
 def bote(partition): # Bag of tasks executor
   """
   A 'bag of tasks' executor.
   """
-  L = []
-  (idxl, idxr) = partition
-  for task in tasks[idxl: idxr]:
+  tsprint('   subprocess {0:5d} has been spawned.'.format(os.getpid()))
+  result = []
+  for task in partition:
     (height, weight) = task
-    bmi = te(height, weight)
-    L.append(bmi)
+    result.append(te(height, weight))
+  tsprint('   subprocess {0:5d} is about to join.'.format(os.getpid()))
 
-  return L
+  return result
 
 def te(height, weight):
   """ In 'Case 1', the task consists in computing the euclidean distance between two

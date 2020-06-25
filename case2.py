@@ -3,7 +3,7 @@ import sys
 import numpy as np
 
 from sharedDefs import tsprint, stimestamp, stimediff
-from case2Defs  import drawSample, statistical, sequential, parallel
+from case2Defs  import drawSample, sequential, parallel, statistical
 
 ECO_SEED = 23
 
@@ -13,10 +13,11 @@ ECO_SEED = 23
 
 def main(nc, ss, sz):
 
-  # draws a sample with the specified size
+  # draws a sample of size <ss>, as specified in the command line
   tsprint('Drawing a sample with {0} million individuals.'.format(ss))
   ss = int(ss * 1E6)
   sample = drawSample(ss, ECO_SEED)
+  tsprint('-- The drawn sample uses up {0:4.1f} MB.'.format(sys.getsizeof(sample)/(2 ** 20)))
 
   if(nc == 0):
 
@@ -36,7 +37,7 @@ def main(nc, ss, sz):
   elif(nc == 1):
 
     # obtains the estimate for the center of the distribution using a sequential execution scheme
-    tsprint('Sequential execution started (using an "exact" solver, process {0}).'.format(os.getpid()))
+    tsprint('Sequential execution started (process {0}).'.format(os.getpid()))
     startTs = stimestamp()
     point_estimate = sequential(sample)
     finishTs = stimestamp()
@@ -49,7 +50,7 @@ def main(nc, ss, sz):
   elif(nc > 1):
 
     # obtains the estimate for the center of the distribution using a parallel execution scheme
-    tsprint('Parallel execution with {0} processes spawed from {1}.'.format(nc, os.getpid()))
+    tsprint('Parallel execution with {0} processes spawned from {1}.'.format(nc, os.getpid()))
     startTs = stimestamp()
     point_estimate = parallel(sample, nc)
     finishTs = stimestamp()
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
   # command line:
   #
-  # python case2.py <number of cores> [<sample size>] [<bootstrap sample size>]
+  # python case2.py <number of cores> <sample size> [<bootstrap sample size>]
   # -- <number of cores>: how many cores can be assigned to tasks;
   #                        0  commands sequential execution of an approximate solver
   #                        1  commands sequential execution of an "exact" solver
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 
   if(nc == 0):
     # this is a call for a sequential execution using an approximated solver ...
-    sz = int(sys.argv[3]) # .. so we need the sample size for the bootstrapping approximation
+    sz = int(sys.argv[3]) # .. so we need the (re)sample size for the approximation
   else:
     sz = None
 

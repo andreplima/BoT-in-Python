@@ -13,7 +13,7 @@ ECO_SEED = 23
 
 def main(nc, ss, nd):
 
-  # draws a sample with the specified size
+  # draws a sample of size <ss>, as specified in the command line
   tsprint('Drawing a sample with {0} {1}D-vectors.'.format(ss, nd))
   sample = drawSample(ss, nd, ECO_SEED)
 
@@ -34,7 +34,7 @@ def main(nc, ss, nd):
   elif(nc > 1):
 
     # obtains the distance matrix using a parallel execution scheme
-    tsprint('Parallel execution started with {0} processes spawned from {1}.'.format(nc, os.getpid()))
+    tsprint('Parallel execution with {0} processes spawned from {1}.'.format(nc, os.getpid()))
     startTs = stimestamp()
     mm = parallel(sample, ss, nc)
     finishTs = stimestamp()

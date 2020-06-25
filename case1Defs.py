@@ -1,5 +1,7 @@
+import os
 import numpy as np
 
+from sharedDefs      import tsprint
 from multiprocessing import Pool
 from itertools       import chain
 
@@ -83,10 +85,12 @@ def bote(partition): # Bag of tasks executor
   """
   A 'bag of tasks' executor.
   """
+  tsprint('   subprocess {0:5d} has been spawned.'.format(os.getpid()))
   result = []
   for task in partition:
     ( (i,j), (v,w) ) = task
     result.append(( (i,j), te(v,w) ))
+  tsprint('   subprocess {0:5d} is about to join.'.format(os.getpid()))
 
   return result
 
