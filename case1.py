@@ -26,8 +26,9 @@ def main(nc, ss, nd):
     finishTs = stimestamp()
     tsprint('Sequential execution completed.')
 
-    # presents the results obtained
+    # presents the obtained results
     tsprint('-- the distance matrix has {0} elements.'.format(len(mm)))
+    tsprint('-- the average distance between vectors is {0:5.3f}.'.format(sum(mm.values())/len(mm)))
     tsprint('-- the process took about {0} seconds to complete.'.format(stimediff(finishTs, startTs)))
 
   elif(nc > 1):
@@ -39,8 +40,9 @@ def main(nc, ss, nd):
     finishTs = stimestamp()
     tsprint('Parallel execution completed.')
 
-    # presents the results obtained
+    # presents the obtained results
     tsprint('-- the distance matrix has {0} elements.'.format(len(mm)))
+    tsprint('-- the average distance between vectors is {0:5.3f}.'.format(sum(mm.values())/len(mm)))
     tsprint('-- the process took about {0} seconds to complete.'.format(stimediff(finishTs, startTs)))
 
   else:

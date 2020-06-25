@@ -11,6 +11,9 @@ from itertools       import chain
 
 def drawSample(ss, seed):
 
+  # ensures the pseudo-random number generator will behave the same between executions
+  np.random.seed(seed)
+
   # defines parameters for height and weight of a male human individual, Brazilian national, 20-40yrs
   # GUIMARÃES, M. Desenvolvimento do Manequim Matemático do Homem Brasileiro para Cálculos de
   #   Dosimetria Interna. 1995 (Tese de Doutorado) – Instituto de Pesquisas Energéticas e Nucleares.
@@ -21,12 +24,9 @@ def drawSample(ss, seed):
   weight_mu =  62.0 # in Kg
   weight_sd =   0.4
 
-  # ensures the pseudo-random number generator behave the same between executions
-  np.random.seed(seed)
-
-  # draws a sample with the specified size
-  # PREMISE 1: these attributes are normally distributed in the brazilian male population
-  # PREMISE 2: an individual of average height is assumed to also have the average weight
+  # draws a sample with the specified size (i.e., we are rebuilding the sample from the parameters)
+  # PREMISE 1: these attributes are normally distributed in the Brazilian male population
+  # PREMISE 2: an individual of average height is assumed to have average weight with highest probability
   height_sample = np.random.normal(height_mu, height_sd, ss)
   weight_sample = np.random.normal(weight_mu, weight_sd, ss)
   sample = list(zip(height_sample, weight_sample))  # each point conforms to a (height, weight) tuple

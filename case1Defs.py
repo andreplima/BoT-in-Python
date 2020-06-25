@@ -1,6 +1,4 @@
 import numpy as np
-import bootstrapped.bootstrap as bs
-import bootstrapped.stats_functions as bs_stats
 
 from multiprocessing import Pool
 from itertools       import chain
@@ -11,24 +9,18 @@ from itertools       import chain
 
 def drawSample(ss, nd, seed):
 
-  # ensures the pseudo-random number generator behave the same between executions
+  # ensures the pseudo-random number generator will behave the same between executions
   np.random.seed(seed)
 
-  # draws a sample of pseudo-random count vectors from unit-boxes
-  sample = {}
-  for i in range(ss):
-    L = []
-    for j in range(nd):
-      L.append(np.random.random())
-    v = np.array(L)
-    sample[i] = v
+  # draws a sample of size <ss> of pseudo-random count <nd>-dimensional vectors from unit nd-boxes
+  sample = {i: np.array([np.random.random() for _ in range(nd)]) for i in range(ss)}
 
   return sample
 
 def sequential(sample, ss):
 
-  # the task is to compute a distance between two vectors
-  # assumes the distance is symmetric
+  # the task is to compute a distance between two vectors;
+  # assumes the distance function (implemented in te) is symmetric
   mm = {}
   for i in range(ss - 1):
     for j in range(i + 1, ss):
@@ -47,14 +39,11 @@ def parallel(sample, ss, nc):
 
   # partitions the tasks into bags and execute them
   pool = Pool(processes = nc,)
-  #partitions = list(chunks(tasks, nc))
   partitions = chunks(tasks, nc)
-  result = pool.map(bote, partitions)
+  results = pool.map(bote, partitions)
 
   # aggregates the results into an integrated response
-  mm = dict(chain(*result))
-
-
+  mm = dict(chain(*results))
 
   return mm
 
@@ -94,12 +83,12 @@ def bote(partition): # Bag of tasks executor
   """
   A 'bag of tasks' executor.
   """
-  L = []
+  result = []
   for task in partition:
     ( (i,j), (v,w) ) = task
-    L.append(( (i,j), te(v,w) ))
+    result.append(( (i,j), te(v,w) ))
 
-  return L
+  return result
 
 def te(v, w):
   """ In 'Case 1', the task consists in computing the euclidean distance between two
