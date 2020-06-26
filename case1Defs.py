@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from itertools       import chain
 
 #-----------------------------------------------------------------------------------------------------------
-# Estimator functions using different execution (sequential, parallel) schemes
+# Supporting functions for different execution (sequential, parallel) schemes
 #-----------------------------------------------------------------------------------------------------------
 
 def drawSample(ss, nd, seed):

@@ -8,7 +8,7 @@ from multiprocessing import Pool
 from itertools       import chain
 
 #-----------------------------------------------------------------------------------------------------------
-# Estimator functions using different execution (sequential, parallel) and solving (statistical) schemes
+# Supporting functions for different execution (sequential, parallel) schemes
 #-----------------------------------------------------------------------------------------------------------
 
 def drawSample(ss, seed):
@@ -22,9 +22,9 @@ def drawSample(ss, seed):
   #   São Paulo).
   # (see page 29; uses data that were collected by IBGE back in 1976/1977)
   height_mu = 168.0 # in cm
-  height_sd =   0.1
+  height_sd =   0.1 # I find this value surprisingly low
   weight_mu =  62.0 # in Kg
-  weight_sd =   0.4
+  weight_sd =   0.4 # this value too
 
   # draws a sample with the specified size (i.e., we are rebuilding the sample from the parameters)
   # PREMISE 1: these attributes are normally distributed in the Brazilian male population
@@ -58,14 +58,6 @@ def parallel(sample, nc):
   point_estimate = np.mean(bmi_sample)
 
   return point_estimate
-
-def statistical(sample, ss, sz, _alpha):
-
-    resample = [sample[i] for i in np.random.choice(ss, min(sz, 10000))]
-    bmi_sample = [te(height, weight) for (height, weight) in resample]
-    res = bs.bootstrap(np.array(bmi_sample), stat_func=bs_stats.mean, alpha=_alpha)
-
-    return (res.lower_bound, res.value, res.upper_bound)
 
 def chunks(L, numOfCores, adjust = []):
   """
@@ -119,3 +111,15 @@ def te(height, weight):
   """
   bmi = weight / (height/100) ** 2
   return bmi
+
+#-----------------------------------------------------------------------------------------------------------
+# Supporting functions for different solving (non-exact, statistical) scheme
+#-----------------------------------------------------------------------------------------------------------
+
+def statistical(sample, ss, sz, _alpha):
+
+    resample = [sample[i] for i in np.random.choice(ss, min(sz, 10000))]
+    bmi_sample = [te(height, weight) for (height, weight) in resample]
+    res = bs.bootstrap(np.array(bmi_sample), stat_func=bs_stats.mean, alpha=_alpha)
+
+    return (res.lower_bound, res.value, res.upper_bound)
