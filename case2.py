@@ -8,7 +8,7 @@ from case2Defs  import drawSample, sequential, parallel, statistical
 ECO_SEED = 23
 
 #-----------------------------------------------------------------------------------------------------------
-# CASE 2 -- computing the average of a large sample
+# CASE 2 - computing the average of a large sample
 #-----------------------------------------------------------------------------------------------------------
 
 def main(nc, ss, sz):
@@ -22,7 +22,7 @@ def main(nc, ss, sz):
   if(nc == 0):
 
     # obtains the estimate for the center of the distribution using a statistical scheme
-    alpha = 0.05
+    alpha = 0.01
     tsprint('Sequential execution started (using an approximate solver with {0} points).'.format(sz))
     startTs = stimestamp()
     (lb, point_estimate, ub) = statistical(sample, ss, sz, alpha)
